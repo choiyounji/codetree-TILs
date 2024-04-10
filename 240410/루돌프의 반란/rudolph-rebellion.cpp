@@ -40,13 +40,23 @@ void collision(int who, int dir, int santanum) {
 			//이미 산타가 있어
 			if (map[nr][nc] > 0) {
 				//상호작용
-				int tmpr = nr;
-				int tmpc = nc;
-				int c = 0;
-				while (!map[tmpr][tmpc] > 0) {
+				/*
+				cout << "상호작용전\n";
+				for (int k = 1; k <= n; k++) {
+					for (int l = 1; l <= n; l++) {
+						cout << map[k][l] << " ";
+					}
+					cout << "\n";
+				}
+				*/
+				int tmpr = nr + lr[dir];
+				int tmpc = nc += lc[dir];
+				int c = 1;
+				while (map[tmpr][tmpc] > 0) {
 					tmpr += lr[dir];
 					tmpc += lc[dir];
 					c++;
+					cout << c;
 				}
 				if (tmpr > 0 && tmpr <= n && tmpc > 0 && tmpc <= n) {
 					for (int a = 0; a < c; a++) {
@@ -55,9 +65,48 @@ void collision(int who, int dir, int santanum) {
 						santa[map[tmpr][tmpc]].y = tmpc;
 						tmpr -= lr[dir];
 						tmpc -= lc[dir];
+						/*
+						cout << "상호작용후\n";
+						for (int k = 1; k <= n; k++) {
+							for (int l = 1; l <= n; l++) {
+								cout << map[k][l] << " ";
+							}
+							cout << "\n";
+						}
+						*/
+					}
+					map[tmpr][tmpc] = santanum;
+					map[santa[santanum].x][santa[santanum].y] = -1;
+					rr = santa[santanum].x;
+					rc = santa[santanum].y;
+					santa[santanum].x = tmpr;
+					santa[santanum].y = tmpc;
+					/*
+					cout << "상호작용후\n";
+					for (int k = 1; k <= n; k++) {
+						for (int l = 1; l <= n; l++) {
+							cout << map[k][l] << " ";
+						}
+						cout << "\n";
+					}
+					*/
+				}
+				else {
+					santa[map[tmpr - lr[dir]][tmpc - lc[dir]]].dead = true;
+					tmpr -= lr[dir];
+					tmpc -= lc[dir];
+					for (int a = 1; a < c; a++) {
+						//cout << "move santa" << map[tmpr - sr[dir]][tmpc - sc[dir]] << "\n";
+						map[tmpr][tmpc] = map[tmpr - lr[dir]][tmpc - lc[dir]];
+						santa[map[tmpr][tmpc]].x = tmpr;
+						santa[map[tmpr][tmpc]].y = tmpc;
+						tmpr -= lr[dir];
+						tmpc -= lc[dir];
 					}
 					map[nr][nc] = santanum;
 					map[santa[santanum].x][santa[santanum].y] = -1;
+					rr = santa[santanum].x;
+					rc = santa[santanum].y;
 					santa[santanum].x = nr;
 					santa[santanum].y = nc;
 				}
@@ -83,8 +132,10 @@ void collision(int who, int dir, int santanum) {
 		}
 		//게임판 밖으로 나가서 탈락
 		else {
-			map[santa[santanum].x-lr[dir]][santa[santanum].y-lc[dir]] = 0;
+			map[rr][rc] = 0;
 			map[santa[santanum].x][santa[santanum].y] = -1;
+			rr = santa[santanum].x;
+			rc = santa[santanum].y;
 			santa[santanum].dead = true;
 		}
 	}
@@ -119,6 +170,8 @@ void collision(int who, int dir, int santanum) {
 					}
 					map[nr][nc] = santanum;
 					map[santa[santanum].x][santa[santanum].y] = -1;
+					rr = santa[santanum].x;
+					rc = santa[santanum].y;
 					santa[santanum].x = nr;
 					santa[santanum].y = nc;
 				}
@@ -136,12 +189,16 @@ void collision(int who, int dir, int santanum) {
 					}
 					map[nr][nc] = santanum;
 					map[santa[santanum].x][santa[santanum].y] = -1;
+					rr = santa[santanum].x;
+					rc = santa[santanum].y;
 					santa[santanum].x = nr;
 					santa[santanum].y = nc;
 				}
 			}
 			else {
-				map[santa[santanum].x][santa[santanum].y] = 0;
+				map[santa[santanum].x][santa[santanum].y] = -1;
+				rr = santa[santanum].x;
+				rc = santa[santanum].y;
 				map[nr][nc] = santanum;
 				santa[santanum].x = nr;
 				santa[santanum].y = nc;
@@ -150,6 +207,8 @@ void collision(int who, int dir, int santanum) {
 		//게임판 밖으로 나가서 탈락
 		else {
 			map[santa[santanum].x][santa[santanum].y] = -1;
+			rr = santa[santanum].x;
+			rc = santa[santanum].y;
 			santa[santanum].dead = true;
 		}
 	}
@@ -180,28 +239,33 @@ void move_lu(int turn) {
 			}
 		}
 		sort(ld.begin(), ld.end());
+		
+		if (!ld.empty()) {
+			map[rr][rc] = 0;
+			rr = clr + lr[ld[0].second];
+			rc = clc + lc[ld[0].second];
 
-		map[rr][rc] = 0;
-		rr = clr + lr[ld[0].second];
-		rc = clc + lc[ld[0].second];
-
-		//이동하려는 자리에 산타가 존재한다면
-		if (map[rr][rc] > 0) {
-			//cout << "rou move collision\n";
-			santa[map[rr][rc]].tmp = turn + 1;
-			//cout << map[rr][rc]<<"기절"<<"\n";
-			collision(-1, ld[0].second, map[rr][rc]);
-		}
-		//cout << "rou move\n";
-		map[rr][rc] = -1;
-		/*
-		for (int k = 1; k <= n; k++) {
-			for (int l = 1; l <= n; l++) {
-				cout << map[k][l] << " ";
+			//이동하려는 자리에 산타가 존재한다면
+			if (map[rr][rc] > 0) {
+				//cout << "rou move collision\n";
+				santa[map[rr][rc]].tmp = turn + 1;
+				//cout << map[rr][rc]<<"기절"<<"\n";
+				collision(-1, ld[0].second, map[rr][rc]);
+				map[rr][rc] = -1;
 			}
-			cout << "\n";
+			else {
+				//cout << "rou move\n";
+				map[rr][rc] = -1;
+				/*
+				for (int k = 1; k <= n; k++) {
+					for (int l = 1; l <= n; l++) {
+						cout << map[k][l] << " ";
+					}
+					cout << "\n";
+				}
+				*/
+			}
 		}
-		*/
 	}
 	
 }
@@ -215,6 +279,7 @@ void move_santa(int turn) {
 				int nr = santa[i].x + sr[j];
 				int nc = santa[i].y + sc[j];
 				if (nr > 0 && nr <= n && nc > 0 && nc <= n) {
+					//산타 움직이는데 산타있으면 안움직임
 					if (map[nr][nc] > 0) {
 						continue;
 					}
@@ -267,9 +332,9 @@ int main() {
 	}
 
 	for (int i = 1; i <= m; i++) {
+		//cout << "move lu\n";
 		move_lu(i);
 		/*
-		cout << "move lu\n";
 		for (int k = 1; k <= n; k++) {
 			for (int l = 1; l <= n; l++) {
 				cout << map[k][l] << " ";
@@ -277,9 +342,9 @@ int main() {
 			cout << "\n";
 		}
 		*/
+		//cout << "move sa\n";
 		move_santa(i);
-		/*
-		cout << "move sa\n";
+		/*/
 		for (int k = 1; k <= n; k++) {
 			for (int l = 1; l <= n; l++) {
 				cout << map[k][l] << " ";
