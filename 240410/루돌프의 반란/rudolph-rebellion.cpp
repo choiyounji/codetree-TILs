@@ -13,7 +13,7 @@ struct info {
 info santa[31];
 int map[51][51];  //루돌프=-1, 산타=번호
 int sr[4] = { -1,0,1,0 };
-int sc[4] = { 0,-1,0,1 };
+int sc[4] = { 0,1,0,-1 };
 int lr[8] = { -1,-1,0,1,1,1,0,-1 };
 int lc[8] = { 0,-1,-1,-1,0,1,1,1 };
 int n,m,p,c,d,rr,rc;
@@ -65,6 +65,8 @@ void collision(int who, int dir, int santanum) {
 			else {
 				map[santa[santanum].x][santa[santanum].y] = 0;
 				map[nr][nc] = santanum;
+				santa[santanum].x = nr;
+				santa[santanum].y = nc;
 				//cout << nr << " " << nc<<map[nr][nc]<<"\n";
 				/*
 				for (int k = 1; k <= n; k++) {
@@ -160,11 +162,13 @@ void move_lu(int turn) {
 		//죽은 산타는 비교안함
 		if (!santa[i].dead) {
 			int len = (clr - santa[i].x) * (clr - santa[i].x) + (clc - santa[i].y) * (clc - santa[i].y);
+			//cout << "len" << len << " " << i << "\n";
 			v.push_back({ len,santa[i] });
 		}
 	}
 	sort(v.begin(), v.end(),cmp);
 	if (!v.empty()) {
+		//cout << "closest santa=" << v[0].second.num<<"\n";
 		//루돌프 8가지 방향 중 산타에 젤 가까워지는 방향 탐색
 		vector<ii> ld;
 		for (int i = 0; i < 8; i++) {
@@ -264,7 +268,25 @@ int main() {
 
 	for (int i = 1; i <= m; i++) {
 		move_lu(i);
+		/*
+		cout << "move lu\n";
+		for (int k = 1; k <= n; k++) {
+			for (int l = 1; l <= n; l++) {
+				cout << map[k][l] << " ";
+			}
+			cout << "\n";
+		}
+		*/
 		move_santa(i);
+		/*
+		cout << "move sa\n";
+		for (int k = 1; k <= n; k++) {
+			for (int l = 1; l <= n; l++) {
+				cout << map[k][l] << " ";
+			}
+			cout << "\n";
+		}
+		*/
 		bool flag = false;
 		for (int j = 1; j <= p; j++) {
 			if (!santa[j].dead) {
