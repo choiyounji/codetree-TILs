@@ -32,6 +32,7 @@ bool tryMove(int num, int dir) {
 
 	q.push(num);
 	ismoved[num] = true;
+
 	while (!q.empty()) {
 		int x = q.front();
 		q.pop();
@@ -60,10 +61,12 @@ bool tryMove(int num, int dir) {
 				continue;
 			}
 			
-			if (knight[i].r > tmpknight[x].r+knight[x].h - 1 || tmpknight[x].r > knight[i].r + knight[i].h - 1)
+			if (knight[i].r > tmpknight[x].r + knight[x].h - 1 || tmpknight[x].r > knight[i].r + knight[i].h - 1) {
 				continue;
-			if (knight[i].c > tmpknight[x].c + knight[i].w - 1 || tmpknight[x].c > knight[i].c + knight[i].w - 1)
+			}
+			if (knight[i].c > tmpknight[x].c + knight[i].w - 1 || tmpknight[x].c > knight[i].c + knight[i].w - 1) {
 				continue;
+			}
 
 			ismoved[i] = true;
 			q.push(i);
