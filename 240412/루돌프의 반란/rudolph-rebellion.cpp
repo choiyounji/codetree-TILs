@@ -101,8 +101,6 @@ int main() {
 					int beforeX = lastX - moveX;
 					int beforeY = lastY - moveY;
 
-					//if (!is_range(beforeX, beforeY)) break;
-
 					int num = board[beforeX][beforeY];
 					if (!is_range(lastX, lastY)) {
 						alive[num] = false;
@@ -185,10 +183,6 @@ int main() {
 						while (!(lastX == firstX and lastY == firstY)) {
 							int beforeX = lastX - moveX;
 							int beforeY = lastY - moveY;
-
-							if (!is_range(beforeX, beforeY)) {
-								break;
-							}
 
 							int num = board[beforeX][beforeY];
 
