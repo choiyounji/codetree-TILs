@@ -112,9 +112,9 @@ int main() {
 		move(num, dir);
 	}
 
-	int ans = 0;
+	long long ans = 0;
 
-	for (int i = 1; i <= q; i++) {
+	for (int i = 1; i <= n; i++) {
 		if (knight[i].k > 0) {
 			ans += originK[i] - knight[i].k;
 		}
