@@ -152,84 +152,84 @@ int main() {
 					minDist = dist;
 					moveDir = dir;
 				}
+			}
 
-				//산타 이동하기로함
-				if (moveDir != -1) {
-					int nx = santa[i].first + dr[moveDir];
-					int ny = santa[i].second + dc[moveDir];
+			//산타 이동하기로함
+			if (moveDir != -1) {
+				int nx = santa[i].first + dr[moveDir];
+				int ny = santa[i].second + dc[moveDir];
 
-					//산타 이동으로 루돌프랑 충돌
-					if (nx == rudolf.first && ny == rudolf.second) {
-						//이때까지 기절
-						stun[i] = t + 1;
+				//산타 이동으로 루돌프랑 충돌
+				if (nx == rudolf.first && ny == rudolf.second) {
+					//이때까지 기절
+					stun[i] = t + 1;
 
-						//루돌프랑 충돌하면 반대방향으로 이동하니까 -
-						int moveX = -dr[moveDir];
-						int moveY = -dc[moveDir];
+					//루돌프랑 충돌하면 반대방향으로 이동하니까 -
+					int moveX = -dr[moveDir];
+					int moveY = -dc[moveDir];
 
-						int firstX = nx + moveX * d;
-						int firstY = ny + moveY * d;
-						int lastX = firstX;
-						int lastY = lastY;
+					int firstX = nx + moveX * d;
+					int firstY = ny + moveY * d;
+					int lastX = firstX;
+					int lastY = firstY;
 
-						//d가 1이면 산타 걍 원래 자리에 있는거나 다름없음
-						if (d == 1) {
-							points[i] += d;
+					//d가 1이면 산타 걍 원래 자리에 있는거나 다름없음
+					if (d == 1) {
+						points[i] += d;
+					}
+					else {
+						while (is_range(lastX, lastY) && board[lastX][lastY] > 0) {
+							lastX += moveX;
+							lastY += moveY;
 						}
-						else {
-							while (is_range(lastX, lastY) && board[lastX][lastY] > 0) {
-								lastX += moveX;
-								lastY += moveY;
+						while (!(lastX == firstX and lastY == firstY)) {
+							int beforeX = lastX - moveX;
+							int beforeY = lastY - moveY;
+
+							if (!is_range(beforeX, beforeY)) {
+								break;
 							}
-							while (!(lastX == firstX and lastY == firstY)) {
-								int beforeX = lastX - moveX;
-								int beforeY = lastY - moveY;
 
-								if (!is_range(beforeX, beforeY)) {
-									break;
-								}
+							int num = board[beforeX][beforeY];
 
-								int num = board[beforeX][beforeY];
-
-								if (!is_range(lastX, lastY)) {
-									alive[num] = false;
-								}
-								else {
-									board[lastX][lastY] = board[beforeX][beforeY];
-									santa[num] = { lastX, lastY };
-								}
-
-								lastX = beforeX;
-								lastY = beforeY;
-							}
-							points[i] += d;
-							board[santa[i].first][santa[i].second] = 0;
-							santa[i] = { firstX,firstY };
-							if (is_range(firstX, firstY)) {
-								board[firstX][firstY] = i;
+							if (!is_range(lastX, lastY)) {
+								alive[num] = false;
 							}
 							else {
-								alive[i] = false;
+								board[lastX][lastY] = board[beforeX][beforeY];
+								santa[num] = { lastX, lastY };
 							}
+
+							lastX = beforeX;
+							lastY = beforeY;
+						}
+						points[i] += d;
+						board[santa[i].first][santa[i].second] = 0;
+						santa[i] = { firstX,firstY };
+						if (is_range(firstX, firstY)) {
+							board[firstX][firstY] = i;
+						}
+						else {
+							alive[i] = false;
 						}
 					}
-					//산타 이동하려는 자리에 암것도 없음
-					else {
-						board[santa[i].first][santa[i].second] = 0;
-						santa[i] = { nx,ny };
-						board[nx][ny] = i;
-					}
 				}
-			}
-			for (int i = 1; i <= p; i++) {
-				if (alive[i]) {
-					points[i]++;
+				//산타 이동하려는 자리에 암것도 없음
+				else {
+					board[santa[i].first][santa[i].second] = 0;
+					santa[i] = { nx,ny };
+					board[nx][ny] = i;
 				}
 			}
 		}
 		for (int i = 1; i <= p; i++) {
-			cout << points[i] << " ";
+			if (alive[i]) {
+				points[i]++;
+			}
 		}
+	}
+	for (int i = 1; i <= p; i++) {
+		cout << points[i] << " ";
 	}
 
 	return 0;
