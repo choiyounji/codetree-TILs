@@ -50,8 +50,8 @@ int main() {
 			if (!alive[i]) {
 				continue;
 			}
-			iii currentBest = { (closestX - rudolf.first) * (closestX - rudolf.first) + (closestY - rudolf.second) * (closestY - rudolf.second), {closestX, closestY} };
-			iii currentValue = { (santa[i].first - rudolf.first) * (santa[i].first - rudolf.first) + (santa[i].second - rudolf.second) * (santa[i].second - rudolf.second), {santa[i].first,santa[i].second} };
+			iii currentBest = { (closestX - rudolf.first) * (closestX - rudolf.first) + (closestY - rudolf.second) * (closestY - rudolf.second), {-closestX, -closestY} };
+			iii currentValue = { (santa[i].first - rudolf.first) * (santa[i].first - rudolf.first) + (santa[i].second - rudolf.second) * (santa[i].second - rudolf.second), {-santa[i].first,-santa[i].second} };
 
 			if (currentValue < currentBest) {
 				closestX = santa[i].first;
